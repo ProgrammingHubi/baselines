@@ -32,7 +32,6 @@ setup(name='baselines',
                 if package.startswith('baselines')],
       install_requires=[
           'gym>=0.15.4, <0.16.0',
-          'TensorFlow>=2.3',
           'scipy',
           'tqdm',
           'joblib',
@@ -48,7 +47,7 @@ setup(name='baselines',
       version='0.1.6')
 
 
-# ensure there is some tensorflow build with version above 1.4
+# ensure there is some tensorflow build with version above 2.3
 import pkg_resources
 tf_pkg = None
 for tf_pkg_name in ['tensorflow', 'tensorflow-gpu', 'tf-nightly', 'tf-nightly-gpu']:
@@ -56,6 +55,7 @@ for tf_pkg_name in ['tensorflow', 'tensorflow-gpu', 'tf-nightly', 'tf-nightly-gp
         tf_pkg = pkg_resources.get_distribution(tf_pkg_name)
     except pkg_resources.DistributionNotFound:
         pass
-assert tf_pkg is not None, 'TensorFlow needed, of version above 1.4'
-from distutils.version import LooseVersion
-assert LooseVersion(re.sub(r'-?rc\d+$', '', tf_pkg.version)) >= LooseVersion('2.3.0')
+if tf_pkg is not None:
+    from distutils.version import LooseVersion
+    assert LooseVersion(re.sub(r'-?rc\d+$', '', tf_pkg.version)) >= LooseVersion('2.3.0'), \
+        f"Found TensorFlow version {tf_pkg.version}, but version 2.3.0 or higher is required."
